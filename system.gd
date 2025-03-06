@@ -1,29 +1,28 @@
 extends Node
 
 
-const ModuleBase: Script = preload("res://addons/godot_system/module/module_base.gd")
-const ModuleTest: = preload("res://addons/godot_system/module/module_test/test_manager.gd")
+const ModuleBase: Script = preload("res://addons/godot_core_system/modules/module_base.gd")
+const ModuleTest: = preload("res://addons/godot_core_system/modules/module_test/test_manager.gd")
 
-const ModuleLog: = preload("res://addons/godot_system/module/module_log/log_manager.gd")
-const ModuleAsyncIO: = preload("res://addons/godot_system/module/module_data/module_async_io/async_io_manager.gd")
-const ModuleSave: = preload("res://addons/godot_system/module/module_data/module_save/save_manager.gd")
-const ModuleConfig: = preload("res://addons/godot_system/module/module_data/module_config/config_manager.gd")
+const ModuleLog: = preload("res://addons/godot_core_system/modules/module_log/log_manager.gd")
+const ModuleFile: = preload("res://addons/godot_core_system/modules/module_data/module_file/file_manager.gd")
+const ModuleAsyncIO: = preload("res://addons/godot_core_system/modules/module_data/module_async_io/async_io_manager.gd")
+const ModuleSave: = preload("res://addons/godot_core_system/modules/module_data/module_save/save_manager.gd")
+const ModuleConfig: = preload("res://addons/godot_core_system/modules/module_data/module_config/config_manager.gd")
 
-const ModuleTime: = preload("res://addons/godot_system/module/module_time/time_manager.gd")
-const ModuleInput: = preload("res://addons/godot_system/module/module_input/input_manager.gd")
-const ModuleAudio: = preload("res://addons/godot_system/module/module_audio/audio_manager.gd")
+const ModuleTime: = preload("res://addons/godot_core_system/modules/module_time/time_manager.gd")
+const ModuleInput: = preload("res://addons/godot_core_system/modules/module_input/input_manager.gd")
+const ModuleAudio: = preload("res://addons/godot_core_system/modules/module_audio/audio_manager.gd")
 
-const ModuleFile: = preload("res://addons/godot_system/module/module_data/module_file/file_manager.gd")
-const ModuleResource: = preload("res://addons/godot_system/module/module_resource/resource_manager.gd")
+const ModuleEntity: = preload("res://addons/godot_core_system/modules/module_entity/entity_manager.gd")
+const ModuleNode: = preload("res://addons/godot_core_system/modules/module_node/node_manager.gd")
+const ModuleResource: = preload("res://addons/godot_core_system/modules/module_resource/resource_manager.gd")
+const ModuleScene: = preload("res://addons/godot_core_system/modules/module_scene/scene_manager.gd")
 
-const ModuleEntity: = preload("res://addons/godot_system/module/module_entity/entity_manager.gd")
-const ModuleNode: = preload("res://addons/godot_system/module/module_node/node_manager.gd")
-const ModuleScene: = preload("res://addons/godot_system/module/module_scene/scene_manager.gd")
-
-const ModuleEvent: = preload("res://addons/godot_system/module/module_event/event_manager.gd")
-const ModuleState: = preload("res://addons/godot_system/module/module_state/state_manager.gd")
-const ModuleTrigger: = preload("res://addons/godot_system/module/module_trigger/trigger_manager.gd")
-const ModuleTag: = preload("res://addons/godot_system/module/module_tag/tag_manager.gd")
+const ModuleEvent: = preload("res://addons/godot_core_system/modules/module_event/event_manager.gd")
+const ModuleState: = preload("res://addons/godot_core_system/modules/module_state/state_manager.gd")
+const ModuleTrigger: = preload("res://addons/godot_core_system/modules/module_trigger/trigger_manager.gd")
+const ModuleTag: = preload("res://addons/godot_core_system/modules/module_tag/tag_manager.gd")
 
 var test_manager: ModuleTest:
 	get: return get_module("test_manager")
@@ -143,7 +142,7 @@ func get_module(module_id: StringName, data: Dictionary = {}) -> ModuleBase:
 
 ## 检查模块是否启用
 func is_module_enabled(module_id: StringName) -> bool:
-	var setting_name: String = "godot_system/module_enable/" + module_id
+	var setting_name: String = "godot_core_system/module_enable/" + module_id
 	if not ProjectSettings.has_setting(setting_name): return true
 	return ProjectSettings.get_setting(setting_name, true)
 

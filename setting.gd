@@ -1,9 +1,9 @@
 extends RefCounted
 
 
-const SETTING_MODULE_ENABLE: String = "godot_system/module_enable/"
-const SETTING_MODULE_SAVE: String = "godot_system/module_save/"
-const SETTING_MODULE_CONFIG: String = "godot_system/module_config/"
+const SETTING_MODULE_ENABLE: String = "godot_core_system/module_enable/"
+const SETTING_MODULE_SAVE: String = "godot_core_system/module_save/"
+const SETTING_MODULE_CONFIG: String = "godot_core_system/module_config/"
 
 const SETTING_INFO_DICT: Dictionary[StringName, Dictionary] = {
 	"module_enable/test_manager":
