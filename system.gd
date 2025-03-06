@@ -74,7 +74,7 @@ var node_manager: ModuleNode:
 	set(value): push_error("node_manager is read-only.")
 
 var scene_manager: ModuleScene:
-	get: return get_module("scene_manager", {"root" : get_tree().get_root()})
+	get: return get_module("scene_manager")
 	set(value): push_error("scene_manager is read-only.")
 
 var event_manager: ModuleEvent:
