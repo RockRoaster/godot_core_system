@@ -175,10 +175,9 @@ func _get_audio_player(type: AudioType) -> AudioStreamPlayer:
 
 func _add_audio_node_root() -> void:
 	if audio_node_root != null: return
-	var audio_stream_node: Node = Node.new()
-	audio_stream_node.set_name("AudioNodeRoot")
-	System.add_child(audio_stream_node)
-	audio_node_root = audio_stream_node
+	audio_node_root = Node.new()
+	audio_node_root.set_name("AudioNodeRoot")
+	_system.add_child(audio_node_root)
 
 
 ## 淡出音乐
