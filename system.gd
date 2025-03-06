@@ -130,11 +130,6 @@ func _physics_process(delta: float) -> void:
 		module._physics_process(delta)
 
 
-func _exit_tree() -> void:
-	for module in _modules.values() as Array[ModuleBase]:
-		module._exit()
-
-
 ## 获取模块
 func get_module(module_id: StringName, data: Dictionary = {}) -> ModuleBase:
 	if not _modules.has(module_id):
