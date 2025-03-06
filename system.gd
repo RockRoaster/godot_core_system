@@ -167,7 +167,10 @@ func _create_module(module_id: StringName, data: Dictionary = {}) -> ModuleBase:
 
 ## 手动卸载指定模组
 func _unload_module(module_id: StringName) -> void:
-	if not _modules.has(module_id): return
+	if not _modules.has(module_id):
+		print("%s模块未被实例化")
+		return
+
 	var module: ModuleBase = _modules[module_id]
 	var instance_id: int = module.get_instance_id()
 	module._exit()
