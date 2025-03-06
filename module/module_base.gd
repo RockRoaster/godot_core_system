@@ -1,6 +1,9 @@
 extends RefCounted
 
 
+var _system: System
+
+
 func _init(_data: Dictionary = {}) -> void:
 	pass
 

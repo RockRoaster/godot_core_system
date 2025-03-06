@@ -161,11 +161,12 @@ func _create_module(module_id: StringName, data: Dictionary = {}) -> ModuleBase:
 		return null
 
 	_modules[module_id] = module
+	module._system = self
 	module._ready()
 	return module
 
 
-## 手动卸载指定模快(会立刻重新加载)
+## 手动卸载指定模快
 func _unload_module(module_id: StringName) -> void:
 	if not _modules.has(module_id):
 		print(module_id, "模块未被实例化")

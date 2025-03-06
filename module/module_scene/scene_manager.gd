@@ -27,20 +27,23 @@ var _transition_rect: ColorRect
 ## 场景栈
 var _scene_stack: Array[Dictionary] = []
 ## 资源管理器
-var _resource_manager : System.ModuleResource:
-	get: return System.resource_manager
+var _resource_manager: System.ModuleResource:
+	get: return _system.resource_manager
 ## 日志管理器
 var _logger: System.ModuleLog:
-	get: return System.log_manager
+	get: return _system.log_manager
 ## 预加载场景
 var _preloaded_scenes: Array[String] = []
 
 
-func _init(data: Dictionary = {}):
-	var root : Window = data.get("root", null)
-	if not root:
-		return
-	_setup_transition_layer(root)
+func _ready() -> void:
+	var tree_root: Window = _system.get_tree().get_root()
+	_setup_transition_layer(tree_root)
+
+
+func _exit() -> void:
+	if _transition_layer == null: return
+	_transition_layer.queue_free()
 
 
 ## 预加载场景
@@ -48,6 +51,7 @@ func _init(data: Dictionary = {}):
 func preload_scene(scene_path: String) -> void:
 	_preloaded_scenes.append(scene_path)
 	_resource_manager.load_resource(scene_path, _resource_manager.LOAD_MODE.LAZY)
+
 
 ## 异步切换场景
 ## [param scene_path] 场景路径
@@ -70,7 +74,7 @@ func change_scene_async(
 		await _start_transition(effect, duration)
 
 	# 加载新场景
-	var new_scene : Node = _resource_manager.get_instance(scene_path)
+	var new_scene: Node = _resource_manager.get_instance(scene_path)
 	if not new_scene:
 		var scene_resource : PackedScene = _resource_manager.get_cached_resource(scene_path)
 		new_scene = scene_resource.instantiate()
@@ -83,6 +87,7 @@ func change_scene_async(
 		new_scene.init_state(scene_data)
 
 	await _do_scene_switch(new_scene, effect, duration, callback, push_to_stack)
+
 
 ## 返回上一个场景
 ## [param effect] 转场效果
@@ -107,6 +112,7 @@ func pop_scene_async(effect: TransitionEffect = TransitionEffect.NONE,
 
 	await _do_scene_switch(prev_scene, effect, duration, callback)
 
+
 ## 子场景管理
 ## [param parent_node] 父节点
 ## [param scene_path] 场景路径
@@ -116,22 +122,25 @@ func add_sub_scene(
 		parent_node: Node,
 		scene_path: String,
 		scene_data: Dictionary = {}) -> Node:
-	var scene_resource = System.resource_manager.load_resource(scene_path)
+	var scene_resource = _system.resource_manager.load_resource(scene_path)
 	var sub_scene = scene_resource.instantiate()
 	if sub_scene.has_method("init_state"):
 		sub_scene.init_state(scene_data)
 	parent_node.add_child(sub_scene)
 	return sub_scene
 
+
 ## 获取当前场景
 func get_current_scene() -> Node:
 	return _current_scene
+
 
 ## 清除预加载的场景
 func clear_preloaded_scenes() -> void:
 	for scene_path in _preloaded_scenes:
 		_resource_manager.clear_resource_cache(scene_path)
 	_preloaded_scenes.clear()
+
 
 ## 开始转场效果
 ## @param effect 转场效果
@@ -142,7 +151,7 @@ func _start_transition(effect: TransitionEffect, duration: float) -> void:
 	match effect:
 		TransitionEffect.FADE:
 			# 淡入淡出
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "color:a", 1.0, duration)
 			await tween.finished
 
@@ -150,16 +159,17 @@ func _start_transition(effect: TransitionEffect, duration: float) -> void:
 			# 滑动
 			_transition_rect.color.a = 1.0
 			_transition_rect.position.x = -_transition_rect.size.x
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "position:x", 0, duration)
 			await tween.finished
 
 		TransitionEffect.DISSOLVE:
 			# 溶解
 			#TODO 这里可以添加更复杂的溶解效果
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "color:a", 1.0, duration)
 			await tween.finished
+
 
 ## 结束转场效果
 ## @param effect 转场效果
@@ -168,29 +178,30 @@ func _end_transition(effect: TransitionEffect, duration: float) -> void:
 	match effect:
 		TransitionEffect.FADE:
 			## 淡出
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "color:a", 0.0, duration)
 			await tween.finished
 
 		TransitionEffect.SLIDE:
 			## 滑动
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "position:x", _transition_rect.size.x, duration)
 			await tween.finished
 
 		TransitionEffect.DISSOLVE:
 			## 溶解
-			var tween = System.create_tween()
+			var tween = _system.create_tween()
 			tween.tween_property(_transition_rect, "color:a", 0.0, duration)
 			await tween.finished
 
 	_transition_rect.visible = false
 
+
 ## 设置转场层
 func _setup_transition_layer(root: Window):
 	_transition_layer = CanvasLayer.new()
 	_transition_layer.layer = 128
-	System.add_child(_transition_layer)
+	_system.add_child(_transition_layer)
 
 	_transition_rect = ColorRect.new()
 	_transition_rect.color = Color(0, 0, 0, 0)
@@ -200,10 +211,12 @@ func _setup_transition_layer(root: Window):
 	root.connect("size_changed", _on_viewport_size_changed)
 	_on_viewport_size_changed()
 
+
 ## 设置转场矩形大小
 func _on_viewport_size_changed():
 	if _transition_rect:
-		_transition_rect.size = System.get_viewport().get_visible_rect().size
+		_transition_rect.size = _system.get_viewport().get_visible_rect().size
+
 
 ## 私有方法：执行场景切换
 ## [param new_scene] 新场景
@@ -234,8 +247,8 @@ func _do_scene_switch(
 			_current_scene.queue_free()
 
 	# 添加新场景
-	System.get_tree().root.call_deferred("add_child", new_scene)
-	#System.get_tree().current_scene = new_scene
+	_system.get_tree().get_root().add_child.call_deferred(new_scene)
+	_system.get_tree().set_current_scene.call_deferred(new_scene)
 	_current_scene = new_scene
 
 	scene_changed.emit(old_scene, new_scene)
